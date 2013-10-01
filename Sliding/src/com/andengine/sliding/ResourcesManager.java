@@ -2,6 +2,9 @@ package com.andengine.sliding;
 
 import org.andengine.engine.Engine;
 import org.andengine.engine.camera.Camera;
+import org.andengine.opengl.font.Font;
+import org.andengine.opengl.font.FontFactory;
+import org.andengine.opengl.texture.ITexture;
 import org.andengine.opengl.texture.TextureOptions;
 import org.andengine.opengl.texture.atlas.bitmap.BitmapTextureAtlas;
 import org.andengine.opengl.texture.atlas.bitmap.BitmapTextureAtlasTextureRegionFactory;
@@ -33,6 +36,8 @@ public class ResourcesManager {
         
     private BuildableBitmapTextureAtlas menuTextureAtlas;
     
+    public Font font;
+    
     //---------------------------------------------
     // TEXTURES & TEXTURE REGIONS
     //---------------------------------------------
@@ -45,6 +50,7 @@ public class ResourcesManager {
     {
         loadMenuGraphics();
         loadMenuAudio();
+        loadMenuFonts();
     }
     
     public void loadGameResources()
@@ -70,6 +76,19 @@ public class ResourcesManager {
     	{
     	        Debug.e(e);
     	}
+    }
+    public void unloadMenuTextures()
+    {
+        menuTextureAtlas.unload();
+    }
+    public void unloadGameTextures()
+    {
+        // TODO (Since we did not create any textures for game scene yet)
+    }
+    
+    public void loadMenuTextures()
+    {
+        menuTextureAtlas.load();
     }
     
     private void loadMenuAudio()
@@ -104,6 +123,15 @@ public class ResourcesManager {
     {
     	splashTextureAtlas.unload();
     	splash_region = null;
+    }
+    
+    private void loadMenuFonts()
+    {
+        FontFactory.setAssetBasePath("font/");
+        final ITexture mainFontTexture = new BitmapTextureAtlas(activity.getTextureManager(), 256, 256, TextureOptions.BILINEAR_PREMULTIPLYALPHA);
+
+        font = FontFactory.createStrokeFromAsset(activity.getFontManager(), mainFontTexture, activity.getAssets(), "font.ttf", 50, true, android.graphics.Color.WHITE, 2, android.graphics.Color.BLACK);
+        font.load();
     }
     
     /**

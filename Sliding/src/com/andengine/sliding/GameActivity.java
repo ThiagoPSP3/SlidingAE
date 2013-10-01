@@ -12,6 +12,8 @@ import org.andengine.engine.options.resolutionpolicy.RatioResolutionPolicy;
 import org.andengine.entity.scene.Scene;
 import org.andengine.ui.activity.BaseGameActivity;
 
+import android.view.KeyEvent;
+
 public class GameActivity extends BaseGameActivity
 {
 
@@ -34,19 +36,19 @@ public class GameActivity extends BaseGameActivity
 	    return engineOptions;
 	}
 	@Override
-	public void onCreateResources(OnCreateResourcesCallback pOnCreateResourcesCallback)throws Exception 
+	public void onCreateResources(OnCreateResourcesCallback pOnCreateResourcesCallback) 
 	{
 		ResourcesManager.prepareManager(mEngine, this, camera, getVertexBufferObjectManager());
 	    resourcesManager = ResourcesManager.getInstance();
 	    pOnCreateResourcesCallback.onCreateResourcesFinished();		
 	}
 	@Override
-	public void onCreateScene(OnCreateSceneCallback pOnCreateSceneCallback)throws Exception 
+	public void onCreateScene(OnCreateSceneCallback pOnCreateSceneCallback) 
 	{
 		SceneManager.getInstance().createSplashScene(pOnCreateSceneCallback);
 	}
 	@Override
-	public void onPopulateScene(Scene pScene,OnPopulateSceneCallback pOnPopulateSceneCallback) throws Exception 
+	public void onPopulateScene(Scene pScene,OnPopulateSceneCallback pOnPopulateSceneCallback) 
 	{
 		mEngine.registerUpdateHandler(new TimerHandler(2f, new ITimerCallback() 
 	    {
@@ -61,5 +63,20 @@ public class GameActivity extends BaseGameActivity
 	            } 
 	    }));
 	    pOnPopulateSceneCallback.onPopulateSceneFinished();
+	}
+	@Override
+	protected void onDestroy()
+	{
+		super.onDestroy();
+	        System.exit(0);	
+	}
+	@Override
+	public boolean onKeyDown(int keyCode, KeyEvent event) 
+	{  
+	    if (keyCode == KeyEvent.KEYCODE_BACK)
+	    {
+	        SceneManager.getInstance().getCurrentScene().onBackKeyPressed();
+	    }
+	    return false; 
 	}
 }
