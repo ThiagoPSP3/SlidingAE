@@ -13,6 +13,7 @@ import org.andengine.opengl.texture.atlas.bitmap.source.IBitmapTextureAtlasSourc
 import org.andengine.opengl.texture.atlas.buildable.builder.BlackPawnTextureAtlasBuilder;
 import org.andengine.opengl.texture.atlas.buildable.builder.ITextureAtlasBuilder.TextureAtlasBuilderException;
 import org.andengine.opengl.texture.region.ITextureRegion;
+import org.andengine.opengl.texture.region.TiledTextureRegion;
 import org.andengine.opengl.vbo.VertexBufferObjectManager;
 import org.andengine.util.debug.Debug;
 
@@ -27,13 +28,17 @@ public class ResourcesManager {
     public GameActivity activity;
     public Camera camera;
     public VertexBufferObjectManager vbom;
+    
     public ITextureRegion splash_region;
     private BitmapTextureAtlas splashTextureAtlas;
     
+    public TiledTextureRegion puzzle_region;
+    private BitmapTextureAtlas puzzleTextureAtlas;
+    public ITextureRegion puzzle0101;
+    
     public ITextureRegion menu_background_region;
     public ITextureRegion play_region;
-    public ITextureRegion options_region;
-        
+    public ITextureRegion options_region;        
     private BuildableBitmapTextureAtlas menuTextureAtlas;
     
     public Font font;
@@ -98,12 +103,15 @@ public class ResourcesManager {
 
     private void loadGameGraphics()
     {
-        
+    	BitmapTextureAtlasTextureRegionFactory.setAssetBasePath("gfx/gallery/");
+    	puzzleTextureAtlas = new BitmapTextureAtlas(activity.getTextureManager(), 720, 720, TextureOptions.BILINEAR);
+    	puzzle_region = BitmapTextureAtlasTextureRegionFactory.createTiledFromAsset(puzzleTextureAtlas, activity, "image0101.jpg", 0, 0, 3, 3);
+    	puzzleTextureAtlas.load();
     }
     
     private void loadGameFonts()
     {
-        
+         
     }
     
     private void loadGameAudio()
