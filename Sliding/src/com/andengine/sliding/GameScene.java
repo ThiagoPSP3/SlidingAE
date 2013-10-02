@@ -13,10 +13,7 @@ import org.andengine.extension.physics.box2d.PhysicsFactory;
 import org.andengine.extension.physics.box2d.PhysicsWorld;
 import org.andengine.extension.physics.box2d.util.constants.PhysicsConstants;
 import org.andengine.input.touch.TouchEvent;
-import org.andengine.opengl.vbo.VertexBufferObjectManager;
 import org.andengine.util.HorizontalAlign;
-import org.andengine.util.color.Color;
-
 import com.andengine.sliding.SceneManager.SceneType;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
@@ -30,10 +27,12 @@ public class GameScene extends BaseScene implements IOnAreaTouchListener
 	private int score = 0;
 	private PhysicsWorld physicsWorld;
 	FixtureDef objectFixtureDef;
+	Vector2 blankPos = new Vector2(0,0);
 	
 	private static final int CAMERA_WIDTH = 720;
 	private static final int CAMERA_HEIGHT = 1280;
 	
+	int move;	
 	
     @Override
     public void createScene()
@@ -46,7 +45,7 @@ public class GameScene extends BaseScene implements IOnAreaTouchListener
 		final Rectangle left = new Rectangle(0, 360, 2, CAMERA_HEIGHT-560, vbom);
 		final Rectangle right = new Rectangle(CAMERA_WIDTH - 2, 360, 2, CAMERA_HEIGHT-560, vbom);
 
-		final FixtureDef wallFixtureDef = PhysicsFactory.createFixtureDef(0, 0.5f, 0.5f);
+		final FixtureDef wallFixtureDef = PhysicsFactory.createFixtureDef(0, 0, 0);
 		PhysicsFactory.createBoxBody(physicsWorld, ground, BodyType.StaticBody, wallFixtureDef);
 		PhysicsFactory.createBoxBody(physicsWorld, roof, BodyType.StaticBody, wallFixtureDef);
 		PhysicsFactory.createBoxBody(physicsWorld, left, BodyType.StaticBody, wallFixtureDef);
@@ -66,11 +65,12 @@ public class GameScene extends BaseScene implements IOnAreaTouchListener
 	    	    	puzzle.setPosition(j*233+2,i*233+2 + 360);
 	    	    	Body body = PhysicsFactory.createBoxBody(physicsWorld, puzzle, BodyType.DynamicBody, objectFixtureDef);    	    	
 	    	    	attachChild(puzzle);
-	    	    	physicsWorld.registerPhysicsConnector(new PhysicsConnector(puzzle, body, true, true));
+	    	    	physicsWorld.registerPhysicsConnector(new PhysicsConnector(puzzle, body, true, false));
 	    			puzzle.setUserData(body);
 	    	    	registerTouchArea(puzzle);
 	    			setTouchAreaBindingOnActionDownEnabled(true);
     			}
+    			else blankPos.set(j*233+2, i*233+2+360) ;
     		}
     	}
     }
@@ -97,7 +97,7 @@ public class GameScene extends BaseScene implements IOnAreaTouchListener
     {
         physicsWorld = new FixedStepPhysicsWorld(60, new Vector2(0, 0), false); 
         registerUpdateHandler(physicsWorld);
-        objectFixtureDef = PhysicsFactory.createFixtureDef(1, 0.5f, 0.5f);
+        objectFixtureDef = PhysicsFactory.createFixtureDef(1, 0, 0);
         setOnAreaTouchListener(this);
     }
     
@@ -108,13 +108,31 @@ public class GameScene extends BaseScene implements IOnAreaTouchListener
     }
     @Override
 	public boolean onAreaTouched( final TouchEvent pSceneTouchEvent, final ITouchArea pTouchArea,final float pTouchAreaLocalX, final float pTouchAreaLocalY) {
-		if(pSceneTouchEvent.isActionMove()) {
+    	if(pSceneTouchEvent.isActionDown()) {
+    		final Piece piece = (Piece) pTouchArea;
+    		if(piece.getX()==blankPos.x){
+    			 if(piece.getY()==blankPos.y + 233) move = 4;
+    			 
+    			 else move = 3;
+    		}
+    		else if(piece.getY()==blankPos.y){
+   			 if(piece.getX()==blankPos.x + 233) move = 2;
+   			 
+   			 else move = 1;
+   		}
+    	}
+    	
+    	/*if(pSceneTouchEvent.isActionMove()) {
 			addToScore(5);
 			final Piece piece = (Piece) pTouchArea;
 			final Body body = (Body) piece.getUserData();
-			body.setTransform(pSceneTouchEvent.getX() / PhysicsConstants.PIXEL_TO_METER_RATIO_DEFAULT, pSceneTouchEvent.getY() / PhysicsConstants.PIXEL_TO_METER_RATIO_DEFAULT, body.getAngle());
+			Vector2 vec = body.getPosition();
+			Vector2 vec2 = new Vector2(pSceneTouchEvent.getX()- vec.x,pSceneTouchEvent.getY()-pTouchAreaLocalX - vec.y);
+			//body.setTransform(pSceneTouchEvent.getX() / PhysicsConstants.PIXEL_TO_METER_RATIO_DEFAULT, pSceneTouchEvent.getY() / PhysicsConstants.PIXEL_TO_METER_RATIO_DEFAULT, body.getAngle());
+			body.setLinearVelocity(vec2);
+			//body.
 			return true;
-		}
+		}*/
 
 		return false;
 	}

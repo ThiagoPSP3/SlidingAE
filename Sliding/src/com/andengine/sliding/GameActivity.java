@@ -12,8 +12,6 @@ import org.andengine.engine.options.resolutionpolicy.RatioResolutionPolicy;
 import org.andengine.entity.scene.Scene;
 import org.andengine.ui.activity.BaseGameActivity;
 
-import com.badlogic.gdx.physics.box2d.Body;
-
 import android.view.KeyEvent;
 
 public class GameActivity extends BaseGameActivity
@@ -42,7 +40,7 @@ public class GameActivity extends BaseGameActivity
 	{
 		ResourcesManager.prepareManager(mEngine, this, camera, getVertexBufferObjectManager());
 	    resourcesManager = ResourcesManager.getInstance();
-	    pOnCreateResourcesCallback.onCreateResourcesFinished();		
+	    pOnCreateResourcesCallback.onCreateResourcesFinished();
 	}
 	@Override
 	public void onCreateScene(OnCreateSceneCallback pOnCreateSceneCallback) 
