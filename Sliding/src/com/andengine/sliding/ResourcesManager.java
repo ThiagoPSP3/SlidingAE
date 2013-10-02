@@ -104,7 +104,7 @@ public class ResourcesManager {
     private void loadGameGraphics()
     {
     	BitmapTextureAtlasTextureRegionFactory.setAssetBasePath("gfx/gallery/");
-    	puzzleTextureAtlas = new BitmapTextureAtlas(activity.getTextureManager(), 720, 720, TextureOptions.BILINEAR);
+    	puzzleTextureAtlas = new BitmapTextureAtlas(activity.getTextureManager(), 699, 699, TextureOptions.BILINEAR);
     	puzzle_region = BitmapTextureAtlasTextureRegionFactory.createTiledFromAsset(puzzleTextureAtlas, activity, "image0101.jpg", 0, 0, 3, 3);
     	puzzleTextureAtlas.load();
     }

@@ -1,35 +1,38 @@
 package com.andengine.sliding;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.andengine.engine.camera.hud.HUD;
+import org.andengine.entity.primitive.Rectangle;
+import org.andengine.entity.scene.IOnAreaTouchListener;
+import org.andengine.entity.scene.ITouchArea;
 import org.andengine.entity.scene.background.Background;
 import org.andengine.entity.text.Text;
 import org.andengine.entity.text.TextOptions;
 import org.andengine.extension.physics.box2d.FixedStepPhysicsWorld;
+import org.andengine.extension.physics.box2d.PhysicsConnector;
+import org.andengine.extension.physics.box2d.PhysicsFactory;
 import org.andengine.extension.physics.box2d.PhysicsWorld;
+import org.andengine.extension.physics.box2d.util.constants.PhysicsConstants;
+import org.andengine.input.touch.TouchEvent;
+import org.andengine.opengl.vbo.VertexBufferObjectManager;
 import org.andengine.util.HorizontalAlign;
 import org.andengine.util.color.Color;
 
 import com.andengine.sliding.SceneManager.SceneType;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.physics.box2d.Body;
+import com.badlogic.gdx.physics.box2d.FixtureDef;
+import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
 
-public class GameScene extends BaseScene
+public class GameScene extends BaseScene implements IOnAreaTouchListener
 {
 	private HUD gameHUD;
 	private Text scoreText;
 	private int score = 0;
 	private PhysicsWorld physicsWorld;
-	private Piece teste0;
-	private Piece teste1;
-	private Piece teste2;
-	private Piece teste3;
-	private Piece teste4;
-	private Piece teste5;
-	private Piece teste6;
-	private Piece teste7;
-	private Piece teste8;
+	FixtureDef objectFixtureDef;
+	
+	private static final int CAMERA_WIDTH = 720;
+	private static final int CAMERA_HEIGHT = 1280;
 	
 	
     @Override
@@ -38,65 +41,44 @@ public class GameScene extends BaseScene
     	createBackground();
         createHUD();
         createPhysics();
-    	/*for(int i=0;i<3;i++){
+        final Rectangle ground = new Rectangle(0, CAMERA_HEIGHT - 202, CAMERA_WIDTH, 2, vbom);
+		final Rectangle roof = new Rectangle(0, 360, CAMERA_WIDTH, 2, vbom);
+		final Rectangle left = new Rectangle(0, 360, 2, CAMERA_HEIGHT-560, vbom);
+		final Rectangle right = new Rectangle(CAMERA_WIDTH - 2, 360, 2, CAMERA_HEIGHT-560, vbom);
+
+		final FixtureDef wallFixtureDef = PhysicsFactory.createFixtureDef(0, 0.5f, 0.5f);
+		PhysicsFactory.createBoxBody(physicsWorld, ground, BodyType.StaticBody, wallFixtureDef);
+		PhysicsFactory.createBoxBody(physicsWorld, roof, BodyType.StaticBody, wallFixtureDef);
+		PhysicsFactory.createBoxBody(physicsWorld, left, BodyType.StaticBody, wallFixtureDef);
+		PhysicsFactory.createBoxBody(physicsWorld, right, BodyType.StaticBody, wallFixtureDef);
+
+		attachChild(ground);
+		attachChild(roof);
+		attachChild(left);
+		attachChild(right);
+
+		registerUpdateHandler(physicsWorld);
+    	for(int i=0;i<3;i++){
     		for(int j=0;j<3;j++){
-    			resourcesManager.puzzle_region.setCurrentTileIndex(3*i+j);
-    			puzzle.add(new Piece(0, 0, resourcesManager.puzzle_region, vbom));
-    	    	puzzle.get(3*i+j).setPosition(j*240,i*240 + 360);
-    	    	attachChild(puzzle.get(3*i+j));
+    			if(3*i+j<8){
+	    			resourcesManager.puzzle_region.setCurrentTileIndex(3*i+j);
+	    			Piece puzzle = new Piece(0, 0, resourcesManager.puzzle_region, vbom);
+	    	    	puzzle.setPosition(j*233+2,i*233+2 + 360);
+	    	    	Body body = PhysicsFactory.createBoxBody(physicsWorld, puzzle, BodyType.DynamicBody, objectFixtureDef);    	    	
+	    	    	attachChild(puzzle);
+	    	    	physicsWorld.registerPhysicsConnector(new PhysicsConnector(puzzle, body, true, true));
+	    			puzzle.setUserData(body);
+	    	    	registerTouchArea(puzzle);
+	    			setTouchAreaBindingOnActionDownEnabled(true);
+    			}
     		}
-    	}*/
-        puzzle = new Piece[9];	
-    	resourcesManager.puzzle_region.setCurrentTileIndex(0);
-        teste0 = new Piece(0, 0, resourcesManager.puzzle_region, vbom);
-    	puzzle[0] = teste0;
-    	teste0.setPosition(0, 360);
-    	attachChild(teste0);
-    	
-    	resourcesManager.puzzle_region.setCurrentTileIndex(1);
-        teste1 = new Piece(0, 0, resourcesManager.puzzle_region, vbom);
-    	teste1.setPosition(240, 360);
-    	attachChild(teste1);
-    	
-    	resourcesManager.puzzle_region.setCurrentTileIndex(2);
-        teste2 = new Piece(0, 0, resourcesManager.puzzle_region, vbom);
-    	teste2.setPosition(480, 360);
-    	attachChild(teste2);
-    	
-    	resourcesManager.puzzle_region.setCurrentTileIndex(3);
-        teste3 = new Piece(0, 0, resourcesManager.puzzle_region, vbom);
-    	teste3.setPosition(0, 600);
-    	attachChild(teste3);
-    	
-    	resourcesManager.puzzle_region.setCurrentTileIndex(4);
-        teste4 = new Piece(0, 0, resourcesManager.puzzle_region, vbom);
-    	teste4.setPosition(240, 600);
-    	attachChild(teste4);
-    	
-    	resourcesManager.puzzle_region.setCurrentTileIndex(5);
-        teste5 = new Piece(0, 0, resourcesManager.puzzle_region, vbom);
-    	teste5.setPosition(480, 600);
-    	attachChild(teste5);
-    	
-    	resourcesManager.puzzle_region.setCurrentTileIndex(6);
-        teste6 = new Piece(0, 0, resourcesManager.puzzle_region, vbom);
-    	teste6.setPosition(0, 840);
-    	attachChild(teste6);
-    	
-    	resourcesManager.puzzle_region.setCurrentTileIndex(7);
-        teste7 = new Piece(0, 0, resourcesManager.puzzle_region, vbom);
-    	teste7.setPosition(240, 840);
-    	attachChild(teste7);
-    	
-    	resourcesManager.puzzle_region.setCurrentTileIndex(8);
-        teste8 = new Piece(0, 0, resourcesManager.puzzle_region, vbom);
-    	teste8.setPosition(480, 840);
-    	attachChild(teste8);
+    	}
     }
     
     private void createBackground()
     {
-        setBackground(new Background(Color.BLUE));
+        setBackground(new Background(0,0,0));
+        
     }
     
     private void createHUD()
@@ -113,8 +95,10 @@ public class GameScene extends BaseScene
     
     private void createPhysics()
     {
-        physicsWorld = new FixedStepPhysicsWorld(60, new Vector2(0, -17), false); 
+        physicsWorld = new FixedStepPhysicsWorld(60, new Vector2(0, 0), false); 
         registerUpdateHandler(physicsWorld);
+        objectFixtureDef = PhysicsFactory.createFixtureDef(1, 0.5f, 0.5f);
+        setOnAreaTouchListener(this);
     }
     
     private void addToScore(int i)
@@ -122,6 +106,18 @@ public class GameScene extends BaseScene
         score += i;
         scoreText.setText("Score: " + score);
     }
+    @Override
+	public boolean onAreaTouched( final TouchEvent pSceneTouchEvent, final ITouchArea pTouchArea,final float pTouchAreaLocalX, final float pTouchAreaLocalY) {
+		if(pSceneTouchEvent.isActionMove()) {
+			addToScore(5);
+			final Piece piece = (Piece) pTouchArea;
+			final Body body = (Body) piece.getUserData();
+			body.setTransform(pSceneTouchEvent.getX() / PhysicsConstants.PIXEL_TO_METER_RATIO_DEFAULT, pSceneTouchEvent.getY() / PhysicsConstants.PIXEL_TO_METER_RATIO_DEFAULT, body.getAngle());
+			return true;
+		}
+
+		return false;
+	}
 
     @Override
     public void onBackKeyPressed()
@@ -144,4 +140,5 @@ public class GameScene extends BaseScene
         // TODO code responsible for disposing scene
         // removing all game scene objects.
     }
+
 }
