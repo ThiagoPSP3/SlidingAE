@@ -8,20 +8,20 @@ import org.andengine.opengl.vbo.VertexBufferObjectManager;
 
 public class Piece extends Sprite{
 	
+	public int size;
+	public int gridPosIni;
+	public int gridPosAct;
 	
-	public Piece(float pX, float pY, ITextureRegion pTextureRegion,	VertexBufferObjectManager pVertexBufferObjectManager) {
+	public Piece(float pX, float pY, ITextureRegion pTextureRegion,	VertexBufferObjectManager pVertexBufferObjectManager, int gridPosition) {
 		super(pX, pY, pTextureRegion, pVertexBufferObjectManager);
-		
+		size = (int)getWidth();
+		gridPosIni = gridPosition;
+		gridPosAct = gridPosition;
 	}
 	@Override
     protected void preDraw(GLState pGLState, Camera pCamera) 
     {
        super.preDraw(pGLState, pCamera);
        pGLState.enableDither();
-    }/*
-	@Override
-	public boolean onAreaTouched(final TouchEvent pSceneTouchEvent, final float pTouchAreaLocalX, final float pTouchAreaLocalY) {
-		this.setPosition(pSceneTouchEvent.getX() - this.getWidth() / 2, pSceneTouchEvent.getY() - this.getHeight() / 2);
-		return true;
-	}*/
+    }
 }
