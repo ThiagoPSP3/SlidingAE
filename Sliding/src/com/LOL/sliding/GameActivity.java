@@ -1,4 +1,4 @@
-package com.andengine.sliding;
+package com.LOL.sliding;
 
 import org.andengine.engine.Engine;
 import org.andengine.engine.LimitedFPSEngine;

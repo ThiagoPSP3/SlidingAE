@@ -1,4 +1,4 @@
-package com.andengine.sliding;
+package com.LOL.sliding;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -12,7 +12,8 @@ import org.andengine.entity.text.Text;
 import org.andengine.entity.text.TextOptions;
 import org.andengine.input.touch.TouchEvent;
 import org.andengine.util.HorizontalAlign;
-import com.andengine.sliding.SceneManager.SceneType;
+
+import com.LOL.sliding.SceneManager.SceneType;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
 
 public class GameScene extends BaseScene implements IOnAreaTouchListener
