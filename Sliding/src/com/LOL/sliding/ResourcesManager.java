@@ -43,6 +43,8 @@ public class ResourcesManager {
     
     public Font font;
     
+    public int puzzleSize = 4;
+    
     //---------------------------------------------
     // TEXTURES & TEXTURE REGIONS
     //---------------------------------------------
@@ -105,7 +107,7 @@ public class ResourcesManager {
     {
     	BitmapTextureAtlasTextureRegionFactory.setAssetBasePath("gfx/gallery/");
     	puzzleTextureAtlas = new BitmapTextureAtlas(activity.getTextureManager(), 699, 699, TextureOptions.BILINEAR);
-    	puzzle_region = BitmapTextureAtlasTextureRegionFactory.createTiledFromAsset(puzzleTextureAtlas, activity, "image0101.jpg", 0, 0, 3, 3);
+    	puzzle_region = BitmapTextureAtlasTextureRegionFactory.createTiledFromAsset(puzzleTextureAtlas, activity, "image0101.jpg", 0, 0, puzzleSize, puzzleSize);
     	puzzleTextureAtlas.load();
     }
     

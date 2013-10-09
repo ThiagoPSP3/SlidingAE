@@ -13,20 +13,15 @@ import com.badlogic.gdx.math.Vector2;
 public class Puzzle {
 
 	private static final int CAMERA_WIDTH = 720;
-	private static final int CAMERA_HEIGHT = 1280;
-	
+	private static final int CAMERA_HEIGHT = 1280;	
 	public Vector2 blank,iniPos,curPos;
-
-	public List<Piece> pieces;
-	
-	public static final int step = 233,topMargin = 360,bottonMargin = 200,wallThickness = 2,puzzleSize=3,puzzleMargin=4;
-	int pieceSize;
-	
-	public enum Dir{
+	public List<Piece> pieces;	
+	public int step = 175,topMargin = 360,bottonMargin = 200,wallThickness = 2,puzzleSize,puzzleMargin=3;
+	int pieceSize;	
+	public enum Dir {
 		Xdown,Xup,Ydown,Yup,Stop
 	}
-	Dir dir;	
-
+	Dir dir;
     protected ResourcesManager resourcesManager;
     protected VertexBufferObjectManager vbom;
     protected SceneManager sceneManager;
@@ -40,11 +35,12 @@ public class Puzzle {
 		gameScene = scene;
     	pieces = new ArrayList<Piece>();
     	blank = new Vector2();iniPos = new Vector2();curPos = new Vector2();
+    	puzzleSize = resourcesManager.puzzleSize;
     	pieceSize = step;
     	createRectangle();
     	for(int i=0;i<puzzleSize;i++)
     		for(int j=0;j<puzzleSize;j++)
-    			if(puzzleSize*i+j<puzzleSize*puzzleSize-1)//Doesn's enter here if it's the last piece because it's where we put the blank
+    			if(puzzleSize*i+j<puzzleSize*puzzleSize-1)//Doesn't enter here if it's the last piece because it's where we put the blank
 	    			addPiece(i,j);
     			else
     				blank.set(j*step+wallThickness+(j+1)*puzzleMargin, i*step+wallThickness+topMargin+(i+1)*puzzleMargin);

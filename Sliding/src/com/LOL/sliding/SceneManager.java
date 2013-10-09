@@ -7,27 +7,16 @@ import org.andengine.ui.IGameInterface.OnCreateSceneCallback;
 
 public class SceneManager
 {
-    //---------------------------------------------
     // SCENES
-    //---------------------------------------------
-    
     private BaseScene splashScene;
     private BaseScene menuScene;
     private BaseScene gameScene;
     private BaseScene loadingScene;
-    
-    //---------------------------------------------
     // VARIABLES
-    //---------------------------------------------
-    
     private static final SceneManager INSTANCE = new SceneManager();
-    
     private SceneType currentSceneType = SceneType.SCENE_SPLASH;
-    
     private BaseScene currentScene;
-    
     private Engine engine = ResourcesManager.getInstance().engine;
-    
     public enum SceneType
     {
         SCENE_SPLASH,
@@ -35,18 +24,13 @@ public class SceneManager
         SCENE_GAME,
         SCENE_LOADING,
     }
-    
-    //---------------------------------------------
     // CLASS LOGIC
-    //---------------------------------------------
-    
     public void setScene(BaseScene scene)
     {
         engine.setScene(scene);
         currentScene = scene;
         currentSceneType = scene.getSceneType();
     }
-    
     public void setScene(SceneType sceneType)
     {
         switch (sceneType)
@@ -67,26 +51,19 @@ public class SceneManager
                 break;
         }
     }
-    
-    //---------------------------------------------
     // GETTERS AND SETTERS
-    //---------------------------------------------
-    
     public static SceneManager getInstance()
     {
         return INSTANCE;
-    }
-    
+    }    
     public SceneType getCurrentSceneType()
     {
         return currentSceneType;
-    }
-    
+    }    
     public BaseScene getCurrentScene()
     {
         return currentScene;
-    }
-    
+    }    
     public void createSplashScene(OnCreateSceneCallback pOnCreateSceneCallback)
     {
         ResourcesManager.getInstance().loadSplashScreen();
@@ -114,8 +91,7 @@ public class SceneManager
                 setScene(gameScene);
             }
         }));
-    }
-    
+    }    
     public void loadMenuScene(final Engine mEngine)
     {
         setScene(loadingScene);
@@ -130,8 +106,7 @@ public class SceneManager
                 setScene(menuScene);
             }
         }));
-    }
-    
+    }    
     public void createMenuScene()
     {
         ResourcesManager.getInstance().loadMenuResources();

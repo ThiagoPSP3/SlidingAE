@@ -18,7 +18,7 @@ public class GameActivity extends BaseGameActivity
 {
 
 	private Camera camera;
-	private ResourcesManager resourcesManager;
+	public ResourcesManager resourcesManager;
 	 
 	
 	@Override
@@ -36,7 +36,7 @@ public class GameActivity extends BaseGameActivity
 	    return engineOptions;
 	}
 	@Override
-	public void onCreateResources(OnCreateResourcesCallback pOnCreateResourcesCallback) 
+	public void onCreateResources(OnCreateResourcesCallback pOnCreateResourcesCallback)
 	{
 		ResourcesManager.prepareManager(mEngine, this, camera, getVertexBufferObjectManager());
 	    resourcesManager = ResourcesManager.getInstance();
@@ -56,10 +56,6 @@ public class GameActivity extends BaseGameActivity
 	            {
 	                mEngine.unregisterUpdateHandler(pTimerHandler);
 	                SceneManager.getInstance().createMenuScene();
-	                // load menu resources, create menu scene
-	                // set menu scene using scene manager
-	                // disposeSplashScene();  
-	                // READ NEXT ARTICLE FOR THIS PART.
 	            } 
 	    }));
 	    pOnPopulateSceneCallback.onPopulateSceneFinished();
