@@ -14,6 +14,7 @@ import org.andengine.input.touch.TouchEvent;
 import org.andengine.util.HorizontalAlign;
 
 import com.LOL.sliding.SceneManager.SceneType;
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
 
 public class GameScene extends BaseScene implements IOnAreaTouchListener
@@ -22,12 +23,12 @@ public class GameScene extends BaseScene implements IOnAreaTouchListener
 	private Text scoreText;
 	private int score = 0;
 	FixtureDef objectFixtureDef;
-	public int blankX,blankY,iniPosX,iniPosY,curPosX,curPosY;
+	public Vector2 blank,iniPos,curPos;
 	
 	private static final int CAMERA_WIDTH = 720;
 	private static final int CAMERA_HEIGHT = 1280;
 	
-	public List<Piece> puzzle;
+	public List<Piece> pieces;
 	
 	public static final int step = 233,topMargin = 360,bottonMargin = 200,wallThickness = 2,puzzleSize=3,puzzleMargin=4;
 	
@@ -47,27 +48,24 @@ public class GameScene extends BaseScene implements IOnAreaTouchListener
     }    
     private void createPuzzle() 
     {
-    	puzzle = new ArrayList<Piece>();
-    	if(!puzzle.isEmpty())
-    		puzzle.clear();
-    	for(int i=0;i<puzzleSize;i++){
-    		for(int j=0;j<puzzleSize;j++){
-    			if(puzzleSize*i+j<puzzleSize*puzzleSize-1){
-	    			resourcesManager.puzzle_region.setCurrentTileIndex(puzzleSize*i+j);
-	    			Piece piece = new Piece(0, 0, resourcesManager.puzzle_region, vbom, puzzleSize*i+j);
-	    	    	piece.setPosition(j*step+wallThickness+(j+1)*puzzleMargin,i*step+wallThickness + topMargin+(i+1)*puzzleMargin);
-	    	    	attachChild(piece);
-	    	    	registerTouchArea(piece);
-	    			setTouchAreaBindingOnActionDownEnabled(true);
-	    			puzzle.add(piece);
-    			}
-    			else{
-    				blankX = j*step+wallThickness+(j+1)*puzzleMargin;
-    				blankY = i*step+wallThickness+topMargin+(i+1)*puzzleMargin;
-    			}
-    		}
-    	}
+    	pieces = new ArrayList<Piece>();
+    	blank = new Vector2();iniPos = new Vector2();curPos = new Vector2();
+    	for(int i=0;i<puzzleSize;i++)
+    		for(int j=0;j<puzzleSize;j++)
+    			if(puzzleSize*i+j<puzzleSize*puzzleSize-1)//Doesn's enter here if it's the last piece because it's where we put the blank
+	    			addPiece(i,j);
+    			else
+    				blank.set(j*step+wallThickness+(j+1)*puzzleMargin, i*step+wallThickness+topMargin+(i+1)*puzzleMargin);
 	}
+    private void addPiece(int x , int y){
+    	resourcesManager.puzzle_region.setCurrentTileIndex(puzzleSize*x+y);
+		Piece piece = new Piece(0, 0, resourcesManager.puzzle_region, vbom, puzzleSize*x+y);
+    	piece.setPosition(y*step+wallThickness+(y+1)*puzzleMargin,x*step+wallThickness + topMargin+(x+1)*puzzleMargin);
+    	attachChild(piece);
+    	registerTouchArea(piece);
+		setTouchAreaBindingOnActionDownEnabled(true);
+		pieces.add(piece);
+    }
 	private void createRectangle() 
 	{ 
     	final Rectangle ground = new Rectangle(0, CAMERA_HEIGHT - bottonMargin-wallThickness, CAMERA_WIDTH, wallThickness, vbom);
@@ -102,118 +100,120 @@ public class GameScene extends BaseScene implements IOnAreaTouchListener
 	public boolean onAreaTouched( final TouchEvent pSceneTouchEvent, final ITouchArea pTouchArea,final float pTouchAreaLocalX, final float pTouchAreaLocalY)
     {  	
     	if(pSceneTouchEvent.isActionDown()) {
-        	final Piece piece = (Piece) pTouchArea;
-        	iniPosX = (int)piece.getX();
-        	iniPosY = (int)piece.getY();
-    		if(iniPosX==blankX){
-    			 if(iniPosY==blankY + piece.size + puzzleMargin)
-    				 dir = Dir.Ydown;    			 
-    			 else if(iniPosY==blankY - piece.size - puzzleMargin)
-    				 dir = Dir.Yup;
-    		}
-    		else if(iniPosY==blankY){
-	   			 if(iniPosX==blankX + piece.size + puzzleMargin)
-	   				dir = Dir.Xdown;	 
-	   			 else if(iniPosX==blankX - piece.size - puzzleMargin)
-	   				dir = Dir.Xup;
-    		}
-    		else
-    			dir = Dir.Stop;
-			return true;
+    		return onTouchDownHandler(pTouchArea);
 		}
-    	if(pSceneTouchEvent.isActionMove()) {
-        	final Piece piece = (Piece) pTouchArea;
-    		curPosX = (int)pSceneTouchEvent.getX();
-    		curPosY = (int)pSceneTouchEvent.getY();
-        	switch(dir){
-    		case Xdown:    			
-    			if(curPosX-piece.size/2<iniPosX && curPosX-piece.size/2>iniPosX-piece.size-puzzleMargin)
-    				piece.setPosition(curPosX-piece.size/2, iniPosY);
-    			break;
-    		case Xup:
-    			if(curPosX-piece.size/2>iniPosX && curPosX-piece.size/2<iniPosX+piece.size+puzzleMargin)
-    				piece.setPosition(curPosX-piece.size/2, iniPosY);
-				break;
-    		case Ydown:
-    			if(curPosY-piece.size/2<iniPosY &&curPosY-piece.size/2>iniPosY-piece.size-puzzleMargin)
-    				piece.setPosition(iniPosX,curPosY-piece.size/2);
-    			break;
-    		case Yup:
-    			if(curPosY-piece.size/2>iniPosY &&curPosY-piece.size/2<iniPosY+piece.size+puzzleMargin)
-    				piece.setPosition(iniPosX,curPosY-piece.size/2);
-    			break;    
-    		case Stop:
-    			break;
-    		}   		
-    		return true;
+    	else if(pSceneTouchEvent.isActionMove()) {        	
+    		return onTouchMoveHandler(pSceneTouchEvent, pTouchArea);
     	} 
-    	if(pSceneTouchEvent.isActionUp()) {
-        	final Piece piece = (Piece) pTouchArea;
-    		curPosX = (int)pSceneTouchEvent.getX();
-    		curPosY = (int)pSceneTouchEvent.getY();
-			switch(dir){
-	    		case Xdown:
-	    			if(iniPosX - curPosX+piece.size/2 >= (piece.size + puzzleMargin)/2){
-		    			piece.setPosition(iniPosX - piece.size - puzzleMargin, iniPosY);
-						blankX = iniPosX;
-						blankY = iniPosY;
-						addToScore(1);
-						piece.gridPosAct-=3;
-	    			}
-					else
-						piece.setPosition(iniPosX,iniPosY);
-	    			break;
-	    		case Xup:
-	    			if(curPosX-piece.size/2 - iniPosX >= (piece.size + puzzleMargin)/2){
-		    			piece.setPosition(iniPosX + piece.size + puzzleMargin, iniPosY);
-						blankX = iniPosX;
-						blankY = iniPosY;
-						addToScore(1);
-						piece.gridPosAct+=3;
-					}
-					else
-						piece.setPosition(iniPosX,iniPosY);
-	    			break;
-	    		case Ydown:
-	    			if(iniPosY - curPosY+piece.size/2 >= (piece.size + puzzleMargin)/2){
-		    			piece.setPosition(iniPosX, iniPosY - piece.size - puzzleMargin);
-						blankX = iniPosX;
-						blankY = iniPosY;
-						addToScore(1);
-						piece.gridPosAct--;
-					}
-					else
-						piece.setPosition(iniPosX,iniPosY);
-	    			break;
-	    		case Yup:
-	    			if(curPosY-piece.size/2 - iniPosY >= (piece.size + puzzleMargin)/2){
-		    			piece.setPosition(iniPosX, iniPosY + piece.size + puzzleMargin);
-						blankX = iniPosX;
-						blankY = iniPosY;
-						addToScore(1);
-						piece.gridPosAct++;
-					}
-					else
-						piece.setPosition(iniPosX,iniPosY);
-					break;
-	    		case Stop:
-	    			break;
-			}
-    		dir = Dir.Stop;
-    		int i =1;
-    		for(Piece pos:puzzle){
-    			i++;
-    			if(pos.gridPosAct != pos.gridPosIni)
-    				break;
-    			if(i == puzzleSize*puzzleSize)
-    				puzzleComplete();
-    		}
-			return true;
+    	else if(pSceneTouchEvent.isActionUp()) {        	
+			return onTouchUpHandler(pSceneTouchEvent,pTouchArea);
     	}
 		return false;
 	}
-    private void puzzleComplete() {
-        scoreText.setText("You Win");
+    private boolean onTouchDownHandler(final ITouchArea pTouchArea)
+    {    	
+    	final Piece piece = (Piece) pTouchArea;
+    	iniPos.set((int)piece.getX(),(int)piece.getY());
+		if(iniPos.x==blank.x){
+			 if(iniPos.y==blank.y + piece.size + puzzleMargin)
+				 dir = Dir.Ydown;    			 
+			 else if(iniPos.y==blank.y - piece.size - puzzleMargin)
+				 dir = Dir.Yup;
+		}
+		else if(iniPos.y==blank.y){
+   			 if(iniPos.x==blank.x + piece.size + puzzleMargin)
+   				dir = Dir.Xdown;	 
+   			 else if(iniPos.x==blank.x - piece.size - puzzleMargin)
+   				dir = Dir.Xup;
+		}
+		else
+			dir = Dir.Stop;
+    	return true;
+    }
+    private boolean onTouchMoveHandler(final TouchEvent pSceneTouchEvent, final ITouchArea pTouchArea)
+    {
+    	final Piece piece = (Piece) pTouchArea;
+		curPos.set((int)pSceneTouchEvent.getX(),(int)pSceneTouchEvent.getY());
+    	switch(dir){
+		case Xdown:    			
+			if(curPos.x-piece.size/2<iniPos.x && curPos.x-piece.size/2>iniPos.x-piece.size-puzzleMargin)
+				piece.setPosition(curPos.x-piece.size/2, iniPos.y);
+			break;
+		case Xup:
+			if(curPos.x-piece.size/2>iniPos.x && curPos.x-piece.size/2<iniPos.x+piece.size+puzzleMargin)
+				piece.setPosition(curPos.x-piece.size/2, iniPos.y);
+			break;
+		case Ydown:
+			if(curPos.y-piece.size/2<iniPos.y && curPos.y-piece.size/2>iniPos.y-piece.size-puzzleMargin)
+				piece.setPosition(iniPos.x,curPos.y-piece.size/2);
+			break;
+		case Yup:
+			if(curPos.y-piece.size/2>iniPos.y && curPos.y-piece.size/2<iniPos.y+piece.size+puzzleMargin)
+				piece.setPosition(iniPos.x,curPos.y-piece.size/2);
+			break;    
+		case Stop:
+			break;
+		}
+    	return true;
+    }
+    private boolean onTouchUpHandler(final TouchEvent pSceneTouchEvent, final ITouchArea pTouchArea)
+    {
+    	final Piece piece = (Piece) pTouchArea;
+		curPos.set((int)pSceneTouchEvent.getX(),(int)pSceneTouchEvent.getY());
+		switch(dir){
+    		case Xdown:
+    			if(iniPos.x - curPos.x+piece.size/2 >= (piece.size + puzzleMargin)/2){
+					movePiece(piece,(int)iniPos.x - piece.size - puzzleMargin,(int)iniPos.y,-3);
+    			}
+				else
+					piece.setPosition(iniPos.x,iniPos.y);
+    			break;
+    		case Xup:
+    			if(curPos.x-piece.size/2 - iniPos.x >= (piece.size + puzzleMargin)/2){
+					movePiece(piece,(int)iniPos.x + piece.size + puzzleMargin,(int)iniPos.y,3);
+				}
+				else
+					piece.setPosition(iniPos.x,iniPos.y);
+    			break;
+    		case Ydown:
+    			if(iniPos.y - curPos.y+piece.size/2 >= (piece.size + puzzleMargin)/2){
+					movePiece(piece,(int)iniPos.x,(int) iniPos.y - piece.size - puzzleMargin,-1);
+				}
+				else
+					piece.setPosition(iniPos.x,iniPos.y);
+    			break;
+    		case Yup:
+    			if(curPos.y-piece.size/2 - iniPos.y >= (piece.size + puzzleMargin)/2){
+					movePiece(piece,(int)iniPos.x,(int) iniPos.y + piece.size + puzzleMargin,1);
+				}
+				else
+					piece.setPosition(iniPos.x,iniPos.y);
+				break;
+    		case Stop:
+    			break;
+		}
+		dir = Dir.Stop;
+		isPuzzleComplete();
+    	return true;
+    }
+    private void movePiece(Piece piece,int x,int y,int inc)
+    {
+    	piece.setPosition(x,y);
+		blank.x = iniPos.x;
+		blank.y = iniPos.y;
+		addToScore(1);
+		piece.gridPosAct+=inc;
+    }
+    private void isPuzzleComplete()
+    {
+    	int i = 1;
+    	for(Piece pos:pieces){
+			i++;
+			if(pos.gridPosAct != pos.gridPosIni)
+				break;
+			if(i == puzzleSize*puzzleSize)
+				scoreText.setText("You Win");
+		}        
 	}
 	@Override
     public void onBackKeyPressed()
