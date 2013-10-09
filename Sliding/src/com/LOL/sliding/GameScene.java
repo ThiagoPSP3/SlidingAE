@@ -91,7 +91,7 @@ public class GameScene extends BaseScene implements IOnAreaTouchListener
         gameHUD.attachChild(scoreText);
         camera.setHUD(gameHUD);
     }    
-    private void addToScore(int i)
+    public void addToScore(int i)
     {
         score += i;
         scoreText.setText("Moves: " + score);
@@ -162,47 +162,39 @@ public class GameScene extends BaseScene implements IOnAreaTouchListener
 		curPos.set((int)pSceneTouchEvent.getX(),(int)pSceneTouchEvent.getY());
 		switch(dir){
     		case Xdown:
-    			if(iniPos.x - curPos.x+piece.size/2 >= (piece.size + puzzleMargin)/2){
-					movePiece(piece,(int)iniPos.x - piece.size - puzzleMargin,(int)iniPos.y,-3);
-    			}
+    			if(iniPos.x - curPos.x+piece.size/2 >= (piece.size + puzzleMargin)/2)
+					piece.move((int)iniPos.x - piece.size - puzzleMargin,(int)iniPos.y,-3);
 				else
 					piece.setPosition(iniPos.x,iniPos.y);
     			break;
     		case Xup:
-    			if(curPos.x-piece.size/2 - iniPos.x >= (piece.size + puzzleMargin)/2){
-					movePiece(piece,(int)iniPos.x + piece.size + puzzleMargin,(int)iniPos.y,3);
-				}
+    			if(curPos.x-piece.size/2 - iniPos.x >= (piece.size + puzzleMargin)/2)
+    				piece.move((int)iniPos.x + piece.size + puzzleMargin,(int)iniPos.y,3);
 				else
 					piece.setPosition(iniPos.x,iniPos.y);
     			break;
     		case Ydown:
-    			if(iniPos.y - curPos.y+piece.size/2 >= (piece.size + puzzleMargin)/2){
-					movePiece(piece,(int)iniPos.x,(int) iniPos.y - piece.size - puzzleMargin,-1);
-				}
+    			if(iniPos.y - curPos.y+piece.size/2 >= (piece.size + puzzleMargin)/2)
+    				piece.move((int)iniPos.x,(int) iniPos.y - piece.size - puzzleMargin,-1);
 				else
 					piece.setPosition(iniPos.x,iniPos.y);
     			break;
     		case Yup:
-    			if(curPos.y-piece.size/2 - iniPos.y >= (piece.size + puzzleMargin)/2){
-					movePiece(piece,(int)iniPos.x,(int) iniPos.y + piece.size + puzzleMargin,1);
-				}
+    			if(curPos.y-piece.size/2 - iniPos.y >= (piece.size + puzzleMargin)/2)
+    				piece.move((int)iniPos.x,(int) iniPos.y + piece.size + puzzleMargin,1);
 				else
 					piece.setPosition(iniPos.x,iniPos.y);
 				break;
     		case Stop:
     			break;
 		}
+		if(piece.getX() == blank.x && piece.getY() == blank.y){
+			blank.set(iniPos);
+			addToScore(1);
+		}
 		dir = Dir.Stop;
 		isPuzzleComplete();
     	return true;
-    }
-    private void movePiece(Piece piece,int x,int y,int inc)
-    {
-    	piece.setPosition(x,y);
-		blank.x = iniPos.x;
-		blank.y = iniPos.y;
-		addToScore(1);
-		piece.gridPosAct+=inc;
     }
     private void isPuzzleComplete()
     {

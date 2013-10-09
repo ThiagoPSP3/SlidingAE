@@ -24,4 +24,9 @@ public class Piece extends Sprite{
        super.preDraw(pGLState, pCamera);
        pGLState.enableDither();
     }
+	public void move(int x,int y,int inc)
+    {
+    	setPosition(x,y);
+		gridPosAct+=inc;
+    }
 }
