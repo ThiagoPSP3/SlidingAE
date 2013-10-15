@@ -43,7 +43,7 @@ public class ResourcesManager {
     
     public Font font;
     
-    public int puzzleSize = 3;
+    public int puzzleSize = 4;
     
     //---------------------------------------------
     // TEXTURES & TEXTURE REGIONS
