@@ -2,6 +2,7 @@ package com.LOL.sliding;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 import org.andengine.entity.primitive.Rectangle;
 import org.andengine.entity.scene.ITouchArea;
@@ -16,7 +17,7 @@ public class Puzzle {
 	private static final int CAMERA_HEIGHT = 1280;	
 	public Vector2 blank,iniPos,curPos;
 	public List<Piece> pieces;	
-	public int step = 175,topMargin = 360,bottonMargin = 200,wallThickness = 2,puzzleSize,puzzleMargin=3;
+	public int step = 233,topMargin = 360,bottonMargin = 200,wallThickness = 2,puzzleSize,puzzleMargin=4;
 	int pieceSize;	
 	public enum Dir {
 		Xdown,Xup,Ydown,Yup,Stop
@@ -44,6 +45,7 @@ public class Puzzle {
 	    			addPiece(i,j);
     			else
     				blank.set(j*step+wallThickness+(j+1)*puzzleMargin, i*step+wallThickness+topMargin+(i+1)*puzzleMargin);
+    	shuffle();
 	}
 	private void addPiece(int x , int y){
     	resourcesManager.puzzle_region.setCurrentTileIndex(puzzleSize*x+y);
@@ -65,12 +67,90 @@ public class Puzzle {
 		gameScene.attachChild(left);
 		gameScene.attachChild(right);	
 	}
+	private void shuffle()
+	{
+		Random r = new Random();
+		for(int i=0;i<1000;i++){
+			boolean xdown=true,xup=true,ydown=true,yup=true;
+			if(blank.x==0)
+				xdown = false;
+			if(blank.y==0)
+				ydown = false;
+			if(blank.x==(puzzleSize-1)*pieceSize + puzzleSize+puzzleMargin)
+				xup = false;
+			if(blank.y==(puzzleSize-1)*pieceSize + puzzleSize+puzzleMargin)
+				yup = false;
+			int opts=0;
+			if(xdown)opts++;
+			if(xup)opts++;
+			if(ydown)opts++;
+			if(yup)opts++;
+			int rand = r.nextInt(opts) + 1;
+			Dir moveDir=Dir.Yup;
+			switch(rand){
+			case 3:
+				if(xdown&&xup&&ydown)
+					moveDir=Dir.Ydown;
+				else
+					moveDir=Dir.Yup;
+				break;
+			case 2:
+				if(xdown&&xup)
+					moveDir=Dir.Xup;
+				else if(xdown&&ydown || xup&&ydown)
+					moveDir=Dir.Ydown;
+				else
+					moveDir=Dir.Yup;
+				break;
+			case 1:
+				if(xdown)
+					moveDir=Dir.Xdown;
+				else if(xup)
+					moveDir=Dir.Xup;
+				else if(ydown)
+					moveDir=Dir.Ydown;
+				else if(yup)
+					moveDir=Dir.Yup;
+				break;
+			}
+			int adj=0;
+			Vector2 inc = new Vector2(0,0);
+			switch(moveDir){
+			case Xdown:
+				adj=-1;
+				inc.x = -puzzleMargin-pieceSize;
+				break;
+			case Xup:
+				adj=1;
+				inc.x = puzzleMargin+pieceSize;
+				break;
+			case Ydown:
+				adj=-3;
+				inc.y = -puzzleMargin-pieceSize;
+				break;
+			case Yup:
+				adj=3;
+				inc.y = puzzleMargin+pieceSize;
+				break;
+			case Stop:
+				break;
+			}
+	    	for(Piece piece:pieces){
+	    		if(piece.getX()+inc.x == blank.x && piece.getY()+inc.y == blank.y){
+	    			iniPos.set(piece.getX(),piece.getY());
+	    			piece.move((int)blank.x, (int)blank.y, adj);
+	    			blank.set(iniPos);
+	    			break;
+	    		}
+	    	}
+		}
+	}
 	private void isPuzzleComplete()
     {
     	int i = 1;
-    	for(Piece pos:pieces){
+    	for(Piece piece:pieces){
 			i++;
-			if(pos.gridPosAct != pos.gridPosIni)
+			if(piece.gridPosAct != piece.gridPosIni)
 				break;
 			if(i == puzzleSize*puzzleSize)
 				gameScene.scoreText.setText("You Win");
@@ -129,25 +209,25 @@ public class Puzzle {
 		switch(dir){
     		case Xdown:
     			if(iniPos.x - curPos.x+pieceSize/2 >= (pieceSize + puzzleMargin)/2)
-					piece.move((int)iniPos.x - pieceSize - puzzleMargin,(int)iniPos.y,-3);
+					piece.move((int)iniPos.x - pieceSize - puzzleMargin,(int)iniPos.y,-1);
 				else
 					piece.setPosition(iniPos.x,iniPos.y);
     			break;
     		case Xup:
     			if(curPos.x-pieceSize/2 - iniPos.x >= (pieceSize + puzzleMargin)/2)
-    				piece.move((int)iniPos.x + pieceSize + puzzleMargin,(int)iniPos.y,3);
+    				piece.move((int)iniPos.x + pieceSize + puzzleMargin,(int)iniPos.y,1);
 				else
 					piece.setPosition(iniPos.x,iniPos.y);
     			break;
     		case Ydown:
     			if(iniPos.y - curPos.y+pieceSize/2 >= (pieceSize + puzzleMargin)/2)
-    				piece.move((int)iniPos.x,(int) iniPos.y - pieceSize - puzzleMargin,-1);
+    				piece.move((int)iniPos.x,(int) iniPos.y - pieceSize - puzzleMargin,-3);
 				else
 					piece.setPosition(iniPos.x,iniPos.y);
     			break;
     		case Yup:
     			if(curPos.y-pieceSize/2 - iniPos.y >= (pieceSize + puzzleMargin)/2)
-    				piece.move((int)iniPos.x,(int) iniPos.y + pieceSize + puzzleMargin,1);
+    				piece.move((int)iniPos.x,(int) iniPos.y + pieceSize + puzzleMargin,3);
 				else
 					piece.setPosition(iniPos.x,iniPos.y);
 				break;
