@@ -8,6 +8,7 @@ import org.andengine.entity.text.Text;
 import org.andengine.entity.text.TextOptions;
 import org.andengine.input.touch.TouchEvent;
 import org.andengine.util.HorizontalAlign;
+import org.andengine.util.color.Color;
 
 import com.LOL.sliding.SceneManager.SceneType;
 
@@ -15,7 +16,7 @@ public class GameScene extends BaseScene implements IOnAreaTouchListener
 {
 	private HUD gameHUD;
 	public Text scoreText;
-	private int score = 0;
+	public int score = 0;
 	
 	Puzzle puzzle;
 	
@@ -32,14 +33,13 @@ public class GameScene extends BaseScene implements IOnAreaTouchListener
     }
 	private void createBackground()
     {
-        setBackground(new Background(0,0,0));        
+		Color color=Color.BLACK;
+        setBackground(new Background(color));        
     }    
     private void createHUD()
     {
-        gameHUD = new HUD();         
-        // CREATE SCORE TEXT
+        gameHUD = new HUD();
         scoreText = new Text(0, 0, resourcesManager.font, "Moves: 0123456789,", new TextOptions(HorizontalAlign.LEFT), vbom);
-        //scoreText.setAnchorCenter(0, 0);    
         scoreText.setText("Moves: 0");
         gameHUD.attachChild(scoreText);
         camera.setHUD(gameHUD);

@@ -17,8 +17,8 @@ public class Puzzle {
 	private static final int CAMERA_HEIGHT = 1280;	
 	public Vector2 blank,iniPos,curPos;
 	public List<Piece> pieces;	
-	public int step = 175,topMargin = 360,bottonMargin = 200,wallThickness = 2,puzzleSize,puzzleMargin=3;
-	int pieceSize;	
+	public int topMargin = 360,bottonMargin = 200,wallThickness = 2,puzzleSize,puzzleMargin=4;
+	int pieceSize = 233;	
 	public enum Dir {
 		Xdown,Xup,Ydown,Yup,Stop
 	}
@@ -37,20 +37,19 @@ public class Puzzle {
     	pieces = new ArrayList<Piece>();
     	blank = new Vector2();iniPos = new Vector2();curPos = new Vector2();
     	puzzleSize = resourcesManager.puzzleSize;
-    	pieceSize = step;
     	createRectangle();
     	for(int i=0;i<puzzleSize;i++)
     		for(int j=0;j<puzzleSize;j++)
     			if(puzzleSize*i+j<puzzleSize*puzzleSize-1)//Doesn't enter here if it's the last piece because it's where we put the blank
 	    			addPiece(i,j);
     			else
-    				blank.set(j*step+wallThickness+(j+1)*puzzleMargin, i*step+wallThickness+topMargin+(i+1)*puzzleMargin);
+    				blank.set(j*pieceSize+wallThickness+(j+1)*puzzleMargin, i*pieceSize+wallThickness+topMargin+(i+1)*puzzleMargin);
     	shuffle();
 	}
 	private void addPiece(int x , int y){
     	resourcesManager.puzzle_region.setCurrentTileIndex(puzzleSize*x+y);
 		Piece piece = new Piece(0, 0, resourcesManager.puzzle_region, vbom, puzzleSize*x+y);
-    	piece.setPosition(y*step+wallThickness+(y+1)*puzzleMargin,x*step+wallThickness + topMargin+(x+1)*puzzleMargin);
+    	piece.setPosition(y*pieceSize+wallThickness+(y+1)*puzzleMargin,x*pieceSize+wallThickness + topMargin+(x+1)*puzzleMargin);
     	gameScene.attachChild(piece);
     	gameScene.registerTouchArea(piece);
     	gameScene.setTouchAreaBindingOnActionDownEnabled(true);
@@ -69,8 +68,8 @@ public class Puzzle {
 	}
 	private void shuffle()
 	{
-		Vector2 corner = new Vector2(blank.x,blank.y);
-		for(int i=0;i<1000||blank.x!=corner.x||blank.y!=corner.y;i++)
+		Vector2 corner = new Vector2(blank);
+		for(int i=0;i<1000||!blank.equals(corner);i++)
 			moveBlank(getRandomDir());
 	}
 	private void moveBlank(Dir moveDir)
@@ -161,7 +160,7 @@ public class Puzzle {
 			if(piece.gridPosAct != piece.gridPosIni)
 				break;
 			if(i == puzzleSize*puzzleSize)
-				gameScene.scoreText.setText("You Win");
+				gameScene.scoreText.setText("You Win "+gameScene.score);
 		}        
 	}
 	public boolean onTouchDownHandler(final ITouchArea pTouchArea)

@@ -1,5 +1,7 @@
 package com.LOL.sliding;
 
+import java.io.File;
+
 import org.andengine.engine.Engine;
 import org.andengine.engine.camera.Camera;
 import org.andengine.opengl.font.Font;
@@ -9,6 +11,7 @@ import org.andengine.opengl.texture.TextureOptions;
 import org.andengine.opengl.texture.atlas.bitmap.BitmapTextureAtlas;
 import org.andengine.opengl.texture.atlas.bitmap.BitmapTextureAtlasTextureRegionFactory;
 import org.andengine.opengl.texture.atlas.bitmap.BuildableBitmapTextureAtlas;
+import org.andengine.opengl.texture.atlas.bitmap.source.FileBitmapTextureAtlasSource;
 import org.andengine.opengl.texture.atlas.bitmap.source.IBitmapTextureAtlasSource;
 import org.andengine.opengl.texture.atlas.buildable.builder.BlackPawnTextureAtlasBuilder;
 import org.andengine.opengl.texture.atlas.buildable.builder.ITextureAtlasBuilder.TextureAtlasBuilderException;
@@ -16,6 +19,9 @@ import org.andengine.opengl.texture.region.ITextureRegion;
 import org.andengine.opengl.texture.region.TiledTextureRegion;
 import org.andengine.opengl.vbo.VertexBufferObjectManager;
 import org.andengine.util.debug.Debug;
+
+import android.net.Uri;
+import android.os.Environment;
 
 public class ResourcesManager {
 	//---------------------------------------------
@@ -43,7 +49,7 @@ public class ResourcesManager {
     
     public Font font;
     
-    public int puzzleSize = 4;
+    public int puzzleSize = 3;
     
     //---------------------------------------------
     // TEXTURES & TEXTURE REGIONS
@@ -105,12 +111,20 @@ public class ResourcesManager {
 
     private void loadGameGraphics()
     {
+    	/*
     	BitmapTextureAtlasTextureRegionFactory.setAssetBasePath("gfx/gallery/");
     	puzzleTextureAtlas = new BitmapTextureAtlas(activity.getTextureManager(), 699, 699, TextureOptions.BILINEAR);
     	puzzle_region = BitmapTextureAtlasTextureRegionFactory.createTiledFromAsset(puzzleTextureAtlas, activity, "image0101.jpg", 0, 0, puzzleSize, puzzleSize);
-    	puzzleTextureAtlas.load();
+    	puzzleTextureAtlas.load();*/
+    	activity.selecPic();
     }
-    
+    public void loadGame2()
+    {
+    	FileBitmapTextureAtlasSource fileTextureSource = FileBitmapTextureAtlasSource.create(new File(gettempUri(2).getPath()));
+    	puzzleTextureAtlas = new BitmapTextureAtlas(activity.getTextureManager(), 699, 699, TextureOptions.BILINEAR);
+    	puzzle_region = BitmapTextureAtlasTextureRegionFactory.createTiledFromSource(puzzleTextureAtlas,fileTextureSource, 0, 0, puzzleSize, puzzleSize);
+    	puzzleTextureAtlas.load();    	
+    }
     private void loadGameFonts()
     {
          
@@ -143,7 +157,30 @@ public class ResourcesManager {
         font = FontFactory.createStrokeFromAsset(activity.getFontManager(), mainFontTexture, activity.getAssets(), "font.ttf", 50, true, android.graphics.Color.WHITE, 2, android.graphics.Color.BLACK);
         font.load();
     }
-    
+    int filecount=0;
+    File dir,tempFile;
+    Uri tempUri;
+    public void setTempUri(){
+		String file_path = Environment.getExternalStorageDirectory().getAbsolutePath() + "/Sliding";
+		dir = new File(file_path);
+
+		if(!dir.exists())
+			dir.mkdirs();
+
+		do{
+			filecount+=1;
+			tempFile = new File(dir, "slidingtmpN" +filecount+ ".jpg");
+		}while(tempFile.exists());
+
+		filecount = 0;
+		tempUri = Uri.fromFile(tempFile);
+	}
+    public Uri gettempUri(int i)
+	{
+		if(i==1)
+			setTempUri();
+		return tempUri;
+	}
     /**
      * @param engine
      * @param activity

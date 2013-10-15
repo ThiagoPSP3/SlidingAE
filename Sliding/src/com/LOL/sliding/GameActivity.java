@@ -12,6 +12,10 @@ import org.andengine.engine.options.resolutionpolicy.RatioResolutionPolicy;
 import org.andengine.entity.scene.Scene;
 import org.andengine.ui.activity.BaseGameActivity;
 
+import android.content.Intent;
+import android.graphics.Bitmap;
+import android.net.Uri;
+import android.provider.MediaStore;
 import android.view.KeyEvent;
 
 public class GameActivity extends BaseGameActivity
@@ -74,5 +78,37 @@ public class GameActivity extends BaseGameActivity
 	        SceneManager.getInstance().getCurrentScene().onBackKeyPressed();
 	    }
 	    return false; 
+	}
+	Uri mImageCaptureUri;
+	public void selecPic(){
+    	Intent intent = new Intent();
+		intent.setType("image/*");
+		intent.setAction(Intent.ACTION_GET_CONTENT);
+		startActivityForResult(intent, 0);
+	}
+	@Override
+	public void onActivityResult(int requestCode, int resultCode, Intent data){
+		if (resultCode != RESULT_OK) return;
+ 
+		if (requestCode == 0){ 
+		        mImageCaptureUri = data.getData();
+		        Intent intent = new Intent("com.android.camera.action.CROP");
+				intent.setType("image/*");
+			    intent.setData(mImageCaptureUri);
+			    intent.putExtra("crop", "true");
+			    intent.putExtra("outputX", 699);
+			    intent.putExtra("outputY", 699);
+		        intent.putExtra("aspectX", 1);
+		        intent.putExtra("aspectY", 1);
+			    intent.putExtra("return-data", false);
+			    intent.putExtra("scale", true);
+		        intent.putExtra("noFaceDetection",true);
+				intent.putExtra(MediaStore.EXTRA_OUTPUT, resourcesManager.gettempUri(1));
+			    intent.putExtra("outputFormat", Bitmap.CompressFormat.JPEG.toString());
+			    startActivityForResult(intent, 1);
+		}
+		else if (requestCode == 1){
+			resourcesManager.loadGame2();
+		}
 	}
 }
