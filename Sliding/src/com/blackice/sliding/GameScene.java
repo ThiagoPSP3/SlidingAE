@@ -1,4 +1,4 @@
-package com.LOL.sliding;
+package com.blackice.sliding;
 
 import org.andengine.engine.camera.hud.HUD;
 import org.andengine.entity.scene.IOnAreaTouchListener;
@@ -10,7 +10,7 @@ import org.andengine.input.touch.TouchEvent;
 import org.andengine.util.HorizontalAlign;
 import org.andengine.util.color.Color;
 
-import com.LOL.sliding.SceneManager.SceneType;
+import com.blackice.sliding.SceneManager.SceneType;
 
 public class GameScene extends BaseScene implements IOnAreaTouchListener
 {

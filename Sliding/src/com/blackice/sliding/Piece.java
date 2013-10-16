@@ -1,4 +1,4 @@
-package com.LOL.sliding;
+package com.blackice.sliding;
 
 import org.andengine.engine.camera.Camera;
 import org.andengine.entity.sprite.Sprite;

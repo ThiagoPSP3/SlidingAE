@@ -1,4 +1,4 @@
-package com.LOL.sliding;
+package com.blackice.sliding;
 
 import java.io.File;
 

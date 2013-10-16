@@ -1,4 +1,4 @@
-package com.LOL.sliding;
+package com.blackice.sliding;
 
 import org.andengine.entity.scene.menu.MenuScene;
 import org.andengine.entity.scene.menu.MenuScene.IOnMenuItemClickListener;
@@ -9,7 +9,7 @@ import org.andengine.entity.sprite.Sprite;
 import org.andengine.opengl.util.GLState;
 import org.andengine.engine.camera.Camera;
 
-import com.LOL.sliding.SceneManager.SceneType;
+import com.blackice.sliding.SceneManager.SceneType;
 
 public class MainMenuScene extends BaseScene implements IOnMenuItemClickListener{
 	

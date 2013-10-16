@@ -1,11 +1,11 @@
-package com.LOL.sliding;
+package com.blackice.sliding;
 
 import org.andengine.entity.scene.background.Background;
 import org.andengine.entity.text.Text;
 import org.andengine.util.color.Color;
 
-import com.LOL.sliding.BaseScene;
-import com.LOL.sliding.SceneManager.SceneType;
+import com.blackice.sliding.BaseScene;
+import com.blackice.sliding.SceneManager.SceneType;
 
 public class LoadingScene extends BaseScene
 {
