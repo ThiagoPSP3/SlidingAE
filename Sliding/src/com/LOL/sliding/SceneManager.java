@@ -87,11 +87,13 @@ public class SceneManager
             {
                 mEngine.unregisterUpdateHandler(pTimerHandler);
                 ResourcesManager.getInstance().loadGameResources();
-                gameScene = new GameScene();
-                setScene(gameScene);
             }
         }));
     }    
+    public void loadGameScene2(){
+        gameScene = new GameScene();
+        setScene(gameScene);
+    }
     public void loadMenuScene(final Engine mEngine)
     {
         setScene(loadingScene);

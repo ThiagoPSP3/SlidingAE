@@ -34,7 +34,7 @@ public class GameActivity extends BaseGameActivity
 	public EngineOptions onCreateEngineOptions() 
 	{
 		camera = new Camera(0, 0, 720, 1280);
-	    EngineOptions engineOptions = new EngineOptions(true, ScreenOrientation.PORTRAIT_FIXED, new RatioResolutionPolicy(720,1280), this.camera);
+	    EngineOptions engineOptions = new EngineOptions(true, ScreenOrientation.PORTRAIT_SENSOR, new RatioResolutionPolicy(720,1280), this.camera);
 	    engineOptions.getAudioOptions().setNeedsMusic(true).setNeedsSound(true);
 	    engineOptions.setWakeLockOptions(WakeLockOptions.SCREEN_ON);
 	    return engineOptions;
@@ -98,7 +98,7 @@ public class GameActivity extends BaseGameActivity
 			    intent.putExtra("crop", "true");
 			    intent.putExtra("outputX", 699);
 			    intent.putExtra("outputY", 699);
-		        intent.putExtra("aspectX", 1);
+			    intent.putExtra("aspectX", 1);
 		        intent.putExtra("aspectY", 1);
 			    intent.putExtra("return-data", false);
 			    intent.putExtra("scale", true);
@@ -109,6 +109,7 @@ public class GameActivity extends BaseGameActivity
 		}
 		else if (requestCode == 1){
 			resourcesManager.loadGame2();
+			SceneManager.getInstance().loadGameScene2();
 		}
 	}
 }

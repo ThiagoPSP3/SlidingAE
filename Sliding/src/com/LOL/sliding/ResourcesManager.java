@@ -68,9 +68,9 @@ public class ResourcesManager {
     
     public void loadGameResources()
     {
-        loadGameGraphics();
         loadGameFonts();
         loadGameAudio();
+        loadGameGraphics();
     }
     
     private void loadMenuGraphics()
