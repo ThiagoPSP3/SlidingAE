@@ -49,7 +49,7 @@ public class ResourcesManager {
     
     public Font font;
     
-    public int puzzleSize = 3;
+    public int puzzleSize = 3,picSize = 699;
     
     //---------------------------------------------
     // TEXTURES & TEXTURE REGIONS
@@ -121,7 +121,7 @@ public class ResourcesManager {
     public void loadGame2()
     {
     	FileBitmapTextureAtlasSource fileTextureSource = FileBitmapTextureAtlasSource.create(new File(gettempUri(2).getPath()));
-    	puzzleTextureAtlas = new BitmapTextureAtlas(activity.getTextureManager(), 699, 699, TextureOptions.BILINEAR);
+    	puzzleTextureAtlas = new BitmapTextureAtlas(activity.getTextureManager(), picSize, picSize, TextureOptions.BILINEAR);
     	puzzle_region = BitmapTextureAtlasTextureRegionFactory.createTiledFromSource(puzzleTextureAtlas,fileTextureSource, 0, 0, puzzleSize, puzzleSize);
     	puzzleTextureAtlas.load();    	
     }

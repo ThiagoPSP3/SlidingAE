@@ -17,8 +17,7 @@ public class Puzzle {
 	private static final int CAMERA_HEIGHT = 1280;	
 	public Vector2 blank,iniPos,curPos;
 	public List<Piece> pieces;	
-	public int topMargin = 360,bottonMargin = 200,wallThickness = 2,puzzleSize,puzzleMargin=4;
-	int pieceSize = 233;	
+	public int pieceSize,screenMargin,wallThickness,puzzleSize,puzzleMargin;
 	public enum Dir {
 		Xdown,Xup,Ydown,Yup,Stop
 	}
@@ -37,19 +36,23 @@ public class Puzzle {
     	pieces = new ArrayList<Piece>();
     	blank = new Vector2();iniPos = new Vector2();curPos = new Vector2();
     	puzzleSize = resourcesManager.puzzleSize;
+    	pieceSize = (int)resourcesManager.picSize/puzzleSize;
+    	puzzleMargin = (int)(CAMERA_WIDTH - pieceSize*puzzleSize) / (puzzleSize + 3);
+    	wallThickness = puzzleMargin;
+    	screenMargin = (int)(CAMERA_HEIGHT - CAMERA_WIDTH)/2;
     	createRectangle();
     	for(int i=0;i<puzzleSize;i++)
     		for(int j=0;j<puzzleSize;j++)
     			if(puzzleSize*i+j<puzzleSize*puzzleSize-1)//Doesn't enter here if it's the last piece because it's where we put the blank
 	    			addPiece(i,j);
     			else
-    				blank.set(j*pieceSize+wallThickness+(j+1)*puzzleMargin, i*pieceSize+wallThickness+topMargin+(i+1)*puzzleMargin);
+    				blank.set(j*pieceSize+wallThickness+(j+1)*puzzleMargin, i*pieceSize+wallThickness+screenMargin+(i+1)*puzzleMargin);
     	shuffle();
 	}
 	private void addPiece(int x , int y){
     	resourcesManager.puzzle_region.setCurrentTileIndex(puzzleSize*x+y);
 		Piece piece = new Piece(0, 0, resourcesManager.puzzle_region, vbom, puzzleSize*x+y);
-    	piece.setPosition(y*pieceSize+wallThickness+(y+1)*puzzleMargin,x*pieceSize+wallThickness + topMargin+(x+1)*puzzleMargin);
+    	piece.setPosition(y*pieceSize+wallThickness+(y+1)*puzzleMargin,x*pieceSize+wallThickness + screenMargin+(x+1)*puzzleMargin);
     	gameScene.attachChild(piece);
     	gameScene.registerTouchArea(piece);
     	gameScene.setTouchAreaBindingOnActionDownEnabled(true);
@@ -57,10 +60,10 @@ public class Puzzle {
     }
 	private void createRectangle() 
 	{
-    	final Rectangle ground = new Rectangle(0, CAMERA_HEIGHT - bottonMargin-wallThickness, CAMERA_WIDTH, wallThickness, vbom);
-		final Rectangle roof = new Rectangle(0, topMargin, CAMERA_WIDTH, wallThickness, vbom);
-		final Rectangle left = new Rectangle(0, topMargin, wallThickness, CAMERA_HEIGHT-topMargin-bottonMargin, vbom);
-		final Rectangle right = new Rectangle(CAMERA_WIDTH - wallThickness, topMargin, wallThickness, CAMERA_HEIGHT-topMargin-bottonMargin, vbom);
+    	final Rectangle ground = new Rectangle(0, CAMERA_HEIGHT - screenMargin-wallThickness, CAMERA_WIDTH, wallThickness, vbom);
+		final Rectangle roof = new Rectangle(0, screenMargin, CAMERA_WIDTH, wallThickness, vbom);
+		final Rectangle left = new Rectangle(0, screenMargin, wallThickness, CAMERA_HEIGHT-screenMargin-screenMargin, vbom);
+		final Rectangle right = new Rectangle(CAMERA_WIDTH - wallThickness, screenMargin, wallThickness, CAMERA_HEIGHT-screenMargin-screenMargin, vbom);
 		gameScene.attachChild(ground);
 		gameScene.attachChild(roof);
 		gameScene.attachChild(left);
