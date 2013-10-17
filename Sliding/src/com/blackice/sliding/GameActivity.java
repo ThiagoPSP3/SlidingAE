@@ -80,7 +80,9 @@ public class GameActivity extends BaseGameActivity
 	    return false; 
 	}
 	Uri mImageCaptureUri;
-	public void selecPic(){
+	int picSize;
+	public void selecPic(int size){
+		picSize = size;
     	Intent intent = new Intent();
 		intent.setType("image/*");
 		intent.setAction(Intent.ACTION_GET_CONTENT);
@@ -96,8 +98,8 @@ public class GameActivity extends BaseGameActivity
 				intent.setType("image/*");
 			    intent.setData(mImageCaptureUri);
 			    intent.putExtra("crop", "true");
-			    intent.putExtra("outputX", 699);
-			    intent.putExtra("outputY", 699);
+			    intent.putExtra("outputX", picSize);
+			    intent.putExtra("outputY", picSize);
 			    intent.putExtra("aspectX", 1);
 		        intent.putExtra("aspectY", 1);
 			    intent.putExtra("return-data", false);

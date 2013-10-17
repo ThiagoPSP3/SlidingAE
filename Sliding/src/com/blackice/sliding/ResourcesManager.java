@@ -29,6 +29,7 @@ public class ResourcesManager {
     //---------------------------------------------
     
     private static final ResourcesManager INSTANCE = new ResourcesManager();
+	private static final int CAMERA_WIDTH = 720;
     
     public Engine engine;
     public GameActivity activity;
@@ -49,7 +50,7 @@ public class ResourcesManager {
     
     public Font font;
     
-    public int puzzleSize = 3,picSize = 699;
+    public int puzzleSize = 3,picSize;
     
     //---------------------------------------------
     // TEXTURES & TEXTURE REGIONS
@@ -65,14 +66,12 @@ public class ResourcesManager {
         loadMenuAudio();
         loadMenuFonts();
     }
-    
     public void loadGameResources()
     {
         loadGameFonts();
         loadGameAudio();
         loadGameGraphics();
     }
-    
     private void loadMenuGraphics()
     {
     	BitmapTextureAtlasTextureRegionFactory.setAssetBasePath("gfx/menu/");
@@ -98,17 +97,14 @@ public class ResourcesManager {
     {
         // TODO (Since we did not create any textures for game scene yet)
     }
-    
     public void loadMenuTextures()
     {
         menuTextureAtlas.load();
     }
-    
     private void loadMenuAudio()
     {
         
     }
-
     private void loadGameGraphics()
     {
     	/*
@@ -116,10 +112,12 @@ public class ResourcesManager {
     	puzzleTextureAtlas = new BitmapTextureAtlas(activity.getTextureManager(), 699, 699, TextureOptions.BILINEAR);
     	puzzle_region = BitmapTextureAtlasTextureRegionFactory.createTiledFromAsset(puzzleTextureAtlas, activity, "image0101.jpg", 0, 0, puzzleSize, puzzleSize);
     	puzzleTextureAtlas.load();*/
-    	activity.selecPic();
+    	picSize=CAMERA_WIDTH-5*6;
+    	activity.selecPic(picSize);
     }
     public void loadGame2()
     {
+    	picSize=CAMERA_WIDTH-5*6;
     	FileBitmapTextureAtlasSource fileTextureSource = FileBitmapTextureAtlasSource.create(new File(gettempUri(2).getPath()));
     	puzzleTextureAtlas = new BitmapTextureAtlas(activity.getTextureManager(), picSize, picSize, TextureOptions.BILINEAR);
     	puzzle_region = BitmapTextureAtlasTextureRegionFactory.createTiledFromSource(puzzleTextureAtlas,fileTextureSource, 0, 0, puzzleSize, puzzleSize);
